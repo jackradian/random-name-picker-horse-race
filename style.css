@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Noto Serif JP", serif;
+}
+main {
+  width: 100vw;
+  height: 100vh;
+  padding-left: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+aside {
+  position: fixed;
+  height: 100%;
+  width: 300px;
+  overflow: hidden;
+  padding: 10px;
+}
+#entries {
+  width: 100%;
+  resize: vertical;
+  overflow: auto;
+  padding: 10px;
+}
+#canvas1 {
+  border: 2px solid #cccccc;
+}
