@@ -28,10 +28,8 @@ class Player {
     this.elapsedTime = 0;
     this.speed = 80; // px/1000ms
     this.speedElapsedTime = 0;
-    this.color = getRandomRgb();
     // Horse sprite
-    this.horseSprite = new Image();
-    this.horseSprite.src = "all-horse-sprite.png";
+    this.horseSprite = window.App.horseSprite;
   }
   update(elapsedTime) {
     if (elapsedTime) {
@@ -97,7 +95,12 @@ function randomSpeed() {
 // Game
 class Game {
   constructor() {
+    // Horse sprite
+    this.horseSprite = new Image();
+    this.horseSprite.src = "all-horse-sprite.png";
     this.horseModelCount = 31;
+    // Random horse sprite index
+    this.shuffleHorseModelIndexArray();
 
     // Course sprite
     this.raceCourseImage = new Image();
@@ -116,26 +119,36 @@ class Game {
     this.ctx = this.canvas.getContext("2d");
     this.canvas.width = 800;
     this.canvas.height = 500;
+
+    this.initEvents();
   }
   init() {
+    this.clear();
     const entries = document
       .getElementById("entries")
       .value.split(/\r?\n/)
       .filter((n) => n);
     if (entries.length > 0) {
       this.playerCount = entries.length;
-      const horseModelIndexArray = shuffle(
-        Array.from(Array(this.horseModelCount).keys())
-      );
       this.ctx.canvas.height = this.playerCount * 60;
+      const horseModelCount = this.horseModelCount;
       for (let i = 0; i < this.playerCount; i++) {
         const drawY = 60 * i;
-        const horseModelIndex =
-          horseModelIndexArray[i % horseModelIndexArray.length];
+        const horseModelIndex = this.horseModelIndexArray[i % horseModelCount];
         this.players.push(new Player(entries[i], horseModelIndex, drawY));
         this.players[this.players.length - 1].draw();
       }
+    } else {
+      this.clear();
     }
+    this.initDraw();
+  }
+  initDraw() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawCourse();
+    this.players.forEach((player) => {
+      player.draw();
+    });
   }
   clear() {
     this.players = [];
@@ -144,8 +157,6 @@ class Game {
     this.winners = [];
   }
   start() {
-    this.clear();
-    this.init();
     this.gameState = "playing";
     this.play();
   }
@@ -184,15 +195,43 @@ class Game {
     }
     return false;
   }
+  shuffleHorseModelIndexArray() {
+    this.horseModelIndexArray = shuffle(
+      Array.from(Array(this.horseModelCount).keys())
+    );
+  }
+  disableAllInput() {
+    document.getElementById("start_game").disabled = true;
+    document.getElementById("horse_model_shuffle").disabled = true;
+    document.getElementById("entries").disabled = true;
+  }
+  enableAllInput() {
+    document.getElementById("start_game").disabled = false;
+    document.getElementById("horse_model_shuffle").disabled = false;
+    document.getElementById("entries").disabled = false;
+  }
+  initEvents() {
+    // Event
+    document.getElementById("start_game").addEventListener("click", (e) => {
+      e.preventDefault();
+      this.disableAllInput();
+      this.start();
+    });
+
+    document.getElementById("entries").addEventListener("input", () => {
+      this.init();
+    });
+
+    document
+      .getElementById("horse_model_shuffle")
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        this.shuffleHorseModelIndexArray();
+        this.init();
+      });
+  }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   window.App = new Game();
-
-  // Event
-  document.getElementById("start_game").addEventListener("click", function (e) {
-    e.preventDefault();
-    this.disabled = true;
-    window.App.start();
-  });
 });
