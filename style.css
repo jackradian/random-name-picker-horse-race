@@ -1,9 +1,18 @@
+/* CSS HEX */
+:root {
+  --paradise-pink: #ef476fff;
+  --orange-yellow-crayola: #ffd166ff;
+  --caribbean-green: #06d6a0ff;
+  --blue-ncs: #118ab2ff;
+  --midnight-green-eagle-green: #073b4cff;
+}
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-body {
+html {
+  font-size: 16px;
   font-family: "Noto Serif JP", serif;
 }
 main {
@@ -21,6 +30,32 @@ aside {
   overflow: hidden;
   padding: 10px;
 }
+.btn {
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 8px;
+  background-color: var(--blue-ncs);
+  color: white;
+  border-radius: 0;
+  border-style: solid;
+  border-color: var(--blue-ncs);
+}
+.btn:disabled {
+  pointer-events: none;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+textarea {
+  border-radius: 0;
+}
+textarea:focus {
+  border-color: var(--blue-ncs);
+  outline: 0;
+}
+.wrapper-center {
+  text-align: center;
+  margin-bottom: 10px;
+}
 #entries {
   width: 100%;
   resize: vertical;
@@ -28,5 +63,6 @@ aside {
   padding: 10px;
 }
 #canvas1 {
+  margin: 20px 0;
   border: 2px solid #cccccc;
 }

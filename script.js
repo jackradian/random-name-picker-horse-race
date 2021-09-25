@@ -63,13 +63,20 @@ class Player {
       this.spriteWidth,
       this.spriteHeight
     );
-    window.App.ctx.fillStyle = "black";
-    window.App.ctx.font = "16px Noto Serif JP, serif";
-    window.App.ctx.fillText(
+    const fontSize = 16;
+    const playerNameTextSet = [
       this.playerName,
       this.x + this.spriteWidth + 2,
-      this.y + this.spriteHeight / 2
-    );
+      this.y + this.spriteHeight / 2 + fontSize / 2,
+    ];
+    window.App.ctx.font = `${fontSize}px Noto Serif JP, serif`;
+    window.App.ctx.shadowColor = "black";
+    window.App.ctx.shadowBlur = 5;
+    window.App.ctx.lineWidth = 3;
+    window.App.ctx.strokeText(...playerNameTextSet);
+    window.App.ctx.shadowBlur = 0;
+    window.App.ctx.fillStyle = "white";
+    window.App.ctx.fillText(...playerNameTextSet);
   }
 }
 
@@ -120,13 +127,11 @@ class Game {
       const horseModelIndexArray = shuffle(
         Array.from(Array(this.horseModelCount).keys())
       );
-      console.log(horseModelIndexArray);
       this.ctx.canvas.height = this.playerCount * 60;
       for (let i = 0; i < this.playerCount; i++) {
         const drawY = 60 * i;
         const horseModelIndex =
           horseModelIndexArray[i % horseModelIndexArray.length];
-        console.log(horseModelIndex);
         this.players.push(new Player(entries[i], horseModelIndex, drawY));
         this.players[this.players.length - 1].draw();
       }
@@ -145,6 +150,9 @@ class Game {
     this.play();
   }
   play(gameTime) {
+    if (this.checkWinner()) {
+      return;
+    }
     const elapsedTime = parseInt(gameTime - this.gameTimeLastFrame);
     this.gameTimeLastFrame = gameTime;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -153,9 +161,6 @@ class Game {
       player.update(elapsedTime);
       player.draw();
     });
-    if (this.checkWinner()) {
-      return;
-    }
     this.gameId = requestAnimationFrame((t) => this.play(t));
   }
   stop() {
