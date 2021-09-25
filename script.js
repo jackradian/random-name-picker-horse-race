@@ -1,7 +1,21 @@
+function shuffle(array) {
+  var m = array.length,
+    t,
+    i;
+  while (m) {
+    i = Math.floor(Math.random() * m--);
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+  return array;
+}
+
 // Player
 class Player {
-  constructor(name, startY = 0) {
+  constructor(name, horseModelIndex = 0, startY = 0) {
     this.playerName = name;
+    this.horseModelIndex = horseModelIndex;
     this.x = 0;
     this.y = startY;
     this.radius = 50;
@@ -15,8 +29,9 @@ class Player {
     this.speed = 80; // px/1000ms
     this.speedElapsedTime = 0;
     this.color = getRandomRgb();
-    this.playerImage = new Image();
-    this.playerImage.src = "horse-sprite-white.png";
+    // Horse sprite
+    this.horseSprite = new Image();
+    this.horseSprite.src = "all-horse-sprite.png";
   }
   update(elapsedTime) {
     if (elapsedTime) {
@@ -38,9 +53,9 @@ class Player {
   }
   draw() {
     window.App.ctx.drawImage(
-      this.playerImage,
+      this.horseSprite,
       this.frameX * this.spriteWidth,
-      this.frameY * this.spriteHeight,
+      this.spriteHeight * this.horseModelIndex,
       this.spriteWidth,
       this.spriteHeight,
       this.x,
@@ -75,10 +90,12 @@ function randomSpeed() {
 // Game
 class Game {
   constructor() {
-    this.playerImage = new Image();
-    this.playerImage.src = "horse-sprite-white.png";
+    this.horseModelCount = 31;
+
+    // Course sprite
     this.raceCourseImage = new Image();
     this.raceCourseImage.src = "race-course.png";
+
     this.gameState = "new";
     this.players = [];
     this.playerCount = 0;
@@ -100,10 +117,17 @@ class Game {
       .filter((n) => n);
     if (entries.length > 0) {
       this.playerCount = entries.length;
+      const horseModelIndexArray = shuffle(
+        Array.from(Array(this.horseModelCount).keys())
+      );
+      console.log(horseModelIndexArray);
       this.ctx.canvas.height = this.playerCount * 60;
       for (let i = 0; i < this.playerCount; i++) {
         const drawY = 60 * i;
-        this.players.push(new Player(entries[i], drawY));
+        const horseModelIndex =
+          horseModelIndexArray[i % horseModelIndexArray.length];
+        console.log(horseModelIndex);
+        this.players.push(new Player(entries[i], horseModelIndex, drawY));
         this.players[this.players.length - 1].draw();
       }
     }
