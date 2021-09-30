@@ -97,14 +97,14 @@ class Game {
   constructor() {
     // Horse sprite
     this.horseSprite = new Image();
-    this.horseSprite.src = "all-horse-sprite.png";
+    this.horseSprite.src = "./img/all-horse-sprite.png";
     this.horseModelCount = 31;
     // Random horse sprite index
     this.shuffleHorseModelIndexArray();
 
     // Course sprite
     this.raceCourseImage = new Image();
-    this.raceCourseImage.src = "race-course.png";
+    this.raceCourseImage.src = "./img/race-course.png";
 
     this.gameState = "new";
     this.players = [];
