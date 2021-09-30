@@ -97,30 +97,38 @@ class Game {
   constructor() {
     // Horse sprite
     this.horseSprite = new Image();
-    this.horseSpriteLoad = new Promise((resolve, reject) => {
+    const horseSpriteLoad = new Promise((resolve, reject) => {
       this.horseSprite.onload = () => resolve();
       this.horseSprite.onerror = reject;
       this.horseSprite.src = "./img/all-horse-sprite.png";
+    });
+    // Course sprite
+    this.raceCourseImage = new Image();
+    const raceCourseImageLoad = new Promise((resolve, reject) => {
+      this.raceCourseImage.onload = () => resolve();
+      this.raceCourseImage.onerror = reject;
+      this.raceCourseImage.src = "./img/race-course.png";
+    });
+    // Win text sprite
+    this.winTextImage = new Image();
+    const winTextImageLoad = new Promise((resolve, reject) => {
+      this.winTextImage.onload = () => resolve();
+      this.winTextImage.onerror = reject;
+      this.winTextImage.src = "./img/win.png";
     });
 
     this.horseModelCount = 31;
     // Random horse sprite index
     this.shuffleHorseModelIndexArray();
 
-    // Course sprite
-    this.raceCourseImage = new Image();
-    this.raceCourseImageLoad = new Promise((resolve, reject) => {
-      this.raceCourseImage.onload = () => resolve();
-      this.raceCourseImage.onerror = reject;
-      this.raceCourseImage.src = "./img/race-course.png";
-    });
-
     this.gameState = "loading";
 
-    Promise.all([this.horseSpriteLoad, this.raceCourseImageLoad]).then(() => {
-      this.gameState = "new";
-      this.init();
-    });
+    Promise.all([horseSpriteLoad, raceCourseImageLoad, winTextImageLoad]).then(
+      () => {
+        this.gameState = "new";
+        this.init();
+      }
+    );
 
     this.players = [];
     this.playerCount = 0;
@@ -149,7 +157,11 @@ class Game {
       .filter((n) => n);
     if (entries.length > 0) {
       this.playerCount = entries.length;
+      const minHeight = 5 * 60;
       this.ctx.canvas.height = this.playerCount * 60;
+      if (this.ctx.canvas.height < minHeight) {
+        this.ctx.canvas.height = minHeight;
+      }
       const horseModelCount = this.horseModelCount;
       for (let i = 0; i < this.playerCount; i++) {
         const drawY = 60 * i;
@@ -209,10 +221,41 @@ class Game {
     });
     if (this.winners.length > 0) {
       this.stop();
-      alert(this.winners.join(", "));
+      this.gameState = "end";
+      this.drawResult();
       return true;
     }
     return false;
+  }
+  drawResult() {
+    this.ctx.fillStyle = "rgba(0,0,0,0.2)";
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    const startDrawPosY = 50;
+    const drawWidth = this.winTextImage.width * 0.6;
+    const drawHeight = this.winTextImage.height * 0.6;
+    this.ctx.drawImage(
+      this.winTextImage,
+      this.canvas.width / 2 - drawWidth / 2,
+      startDrawPosY,
+      drawWidth,
+      drawHeight
+    );
+    const fontSize = 80;
+    const playerNameTextSet = [
+      this.winners[0],
+      this.canvas.width / 2,
+      startDrawPosY + drawHeight + 10 + fontSize,
+    ];
+    this.ctx.textAlign = "center";
+    this.ctx.font = `${fontSize}px Noto Serif JP, serif`;
+    this.ctx.shadowColor = "black";
+    this.ctx.shadowBlur = 15;
+    this.ctx.lineWidth = 5;
+    this.ctx.strokeText(...playerNameTextSet);
+    this.ctx.shadowBlur = 0;
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText(...playerNameTextSet);
+    this.ctx.textAlign = "start";
   }
   shuffleHorseModelIndexArray() {
     this.horseModelIndexArray = shuffle(
