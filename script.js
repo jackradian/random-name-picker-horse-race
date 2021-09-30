@@ -164,7 +164,7 @@ class Game {
       }
       const horseModelCount = this.horseModelCount;
       for (let i = 0; i < this.playerCount; i++) {
-        const drawY = 60 * i;
+        const drawY = 60 * i + 2;
         const horseModelIndex = this.horseModelIndexArray[i % horseModelCount];
         this.players.push(new Player(entries[i], horseModelIndex, drawY));
         this.players[this.players.length - 1].draw();
