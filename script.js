@@ -287,6 +287,17 @@ class Game {
         this.shuffleHorseModelIndexArray();
         this.init();
       });
+
+    document
+      .getElementById("shuffle_entries")
+      .addEventListener("click", (e) => {
+        e.preventDefault();
+        const entriesInput = document.getElementById("entries");
+        const entries = entriesInput.value.split(/\r?\n/).filter((n) => n);
+        shuffle(entries);
+        entriesInput.value = entries.join("\r\n");
+        entriesInput.dispatchEvent(new Event("input"));
+      });
   }
 }
 

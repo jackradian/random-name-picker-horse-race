@@ -5,6 +5,7 @@
   --caribbean-green: #06d6a0ff;
   --blue-ncs: #118ab2ff;
   --midnight-green-eagle-green: #073b4cff;
+  --color-primary: var(--blue-ncs);
 }
 * {
   margin: 0;
@@ -18,7 +19,7 @@ html {
 }
 header {
   width: 100%;
-  background-color: var(--blue-ncs);
+  background-color: var(--color-primary);
   padding: 10px 20px;
 }
 h1.brand a {
@@ -43,11 +44,12 @@ aside {
   cursor: pointer;
   font-size: 1rem;
   padding: 8px;
-  background-color: var(--blue-ncs);
+  background-color: var(--color-primary);
   color: white;
   border-radius: 0;
   border-style: solid;
-  border-color: var(--blue-ncs);
+  border-color: var(--color-primary);
+  margin-bottom: 10px;
 }
 .btn:disabled {
   pointer-events: none;
@@ -58,7 +60,7 @@ textarea {
   border-radius: 0;
 }
 textarea:focus {
-  border-color: var(--blue-ncs);
+  border-color: var(--color-primary);
   outline: 0;
 }
 .wrapper-center {
