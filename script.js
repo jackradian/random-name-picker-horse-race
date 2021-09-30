@@ -97,16 +97,31 @@ class Game {
   constructor() {
     // Horse sprite
     this.horseSprite = new Image();
-    this.horseSprite.src = "./img/all-horse-sprite.png";
+    this.horseSpriteLoad = new Promise((resolve, reject) => {
+      this.horseSprite.onload = () => resolve();
+      this.horseSprite.onerror = reject;
+      this.horseSprite.src = "./img/all-horse-sprite.png";
+    });
+
     this.horseModelCount = 31;
     // Random horse sprite index
     this.shuffleHorseModelIndexArray();
 
     // Course sprite
     this.raceCourseImage = new Image();
-    this.raceCourseImage.src = "./img/race-course.png";
+    this.raceCourseImageLoad = new Promise((resolve, reject) => {
+      this.raceCourseImage.onload = () => resolve();
+      this.raceCourseImage.onerror = reject;
+      this.raceCourseImage.src = "./img/race-course.png";
+    });
 
-    this.gameState = "new";
+    this.gameState = "loading";
+
+    Promise.all([this.horseSpriteLoad, this.raceCourseImageLoad]).then(() => {
+      this.gameState = "new";
+      this.init();
+    });
+
     this.players = [];
     this.playerCount = 0;
     this.gameTimeLastFrame = 0;
