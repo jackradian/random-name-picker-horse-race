@@ -31,12 +31,12 @@ class Player {
     // Horse sprite
     this.horseSprite = window.App.horseSprite;
   }
-  update(elapsedTime) {
+  update(elapsedTime, dSpeed) {
     if (elapsedTime) {
       this.elapsedTime += elapsedTime;
       this.speedElapsedTime += elapsedTime;
     }
-    this.speedElapsedTime += randomSpeed();
+    this.speedElapsedTime += dSpeed;
     if (this.speedElapsedTime < 0) {
       this.speedElapsedTime = 0;
     }
@@ -76,20 +76,6 @@ class Player {
     window.App.ctx.fillStyle = "white";
     window.App.ctx.fillText(...playerNameTextSet);
   }
-}
-
-function getRandomRgb() {
-  var num = Math.round(0xffffff * Math.random());
-  var r = num >> 16;
-  var g = (num >> 8) & 255;
-  var b = num & 255;
-  return "rgb(" + r + ", " + g + ", " + b + ")";
-}
-
-function randomSpeed() {
-  const min = -50;
-  const max = 30;
-  return Math.floor(Math.random() * (max + 1 - min)) + min;
 }
 
 // Game
@@ -199,10 +185,11 @@ class Game {
     this.gameTimeLastFrame = gameTime;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawCourse();
-    this.players.forEach((player) => {
-      player.update(elapsedTime);
-      player.draw();
-    });
+    const dSpeedArray = this.randomSpeed(this.playerCount);
+    for (let i = 0; i < this.playerCount; i++) {
+      this.players[i].update(elapsedTime, dSpeedArray[i]);
+      this.players[i].draw();
+    }
     this.gameId = requestAnimationFrame((t) => this.play(t));
   }
   stop() {
@@ -261,6 +248,15 @@ class Game {
     this.horseModelIndexArray = shuffle(
       Array.from(Array(this.horseModelCount).keys())
     );
+  }
+  randomSpeed(playerNum) {
+    const arr = [];
+    const min = -50;
+    const max = 30;
+    while (arr.length < playerNum) {
+      arr.push(Math.floor(Math.random() * (max + 1 - min)) + min);
+    }
+    return arr;
   }
   disableAllInput() {
     document.getElementById("start_game").disabled = true;
