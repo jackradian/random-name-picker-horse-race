@@ -138,6 +138,10 @@ class Game {
     this.initEvents();
   }
   init() {
+    if (this.gameState === "loading") {
+      return console.log("GAME LOADING");
+    }
+
     this.clear();
     const entries = document
       .getElementById("entries")
