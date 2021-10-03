@@ -262,11 +262,13 @@ class Game {
     document.getElementById("start_game").disabled = true;
     document.getElementById("horse_model_shuffle").disabled = true;
     document.getElementById("entries").disabled = true;
+    document.getElementById("shuffle_entries").disabled = true;
   }
   enableAllInput() {
     document.getElementById("start_game").disabled = false;
     document.getElementById("horse_model_shuffle").disabled = false;
     document.getElementById("entries").disabled = false;
+    document.getElementById("shuffle_entries").disabled = false;
   }
   initEvents() {
     // Event
