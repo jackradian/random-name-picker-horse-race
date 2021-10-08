@@ -31,18 +31,17 @@ class Player {
     // Horse sprite
     this.horseSprite = window.App.horseSprite;
   }
-  update(elapsedTime, dSpeed) {
+  update(elapsedTime, newVelocity) {
     if (elapsedTime) {
       this.elapsedTime += elapsedTime;
-      this.speedElapsedTime += elapsedTime;
     }
-    this.speedElapsedTime += dSpeed;
-    if (this.speedElapsedTime < 0) {
-      this.speedElapsedTime = 0;
-    }
-    const dx = ~~((this.speedElapsedTime * this.speed) / 1000);
+    const timeInterval = elapsedTime ? elapsedTime / 1000 : 0.001;
+    const acceleration = (newVelocity - this.speed) / timeInterval;
+    let dx = ~~(
+      this.speed * timeInterval +
+      0.5 * acceleration * timeInterval * timeInterval
+    );
     this.x += dx;
-    this.speedElapsedTime = this.speedElapsedTime % ~~(1000 / this.speed);
     if (this.elapsedTime > 50) {
       this.frame++;
       this.elapsedTime -= 50;
@@ -185,9 +184,9 @@ class Game {
     this.gameTimeLastFrame = gameTime;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawCourse();
-    const dSpeedArray = this.randomSpeed(this.playerCount);
+    const velocityArray = this.randomVelocity(this.playerCount);
     for (let i = 0; i < this.playerCount; i++) {
-      this.players[i].update(elapsedTime, dSpeedArray[i]);
+      this.players[i].update(elapsedTime, velocityArray[i]);
       this.players[i].draw();
     }
     this.gameId = requestAnimationFrame((t) => this.play(t));
@@ -249,10 +248,10 @@ class Game {
       Array.from(Array(this.horseModelCount).keys())
     );
   }
-  randomSpeed(playerNum) {
+  randomVelocity(playerNum) {
     const arr = [];
-    const min = -50;
-    const max = 30;
+    const min = 0;
+    const max = 400;
     while (arr.length < playerNum) {
       arr.push(Math.floor(Math.random() * (max + 1 - min)) + min);
     }
