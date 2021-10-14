@@ -104,16 +104,9 @@ class Game {
 
     this.horseModelCount = 31;
     // Random horse sprite index
-    this.shuffleHorseModelIndexArray();
+    this.#shuffleHorseModelIndexArray();
 
     this.gameState = "loading";
-
-    Promise.all([horseSpriteLoad, raceCourseImageLoad, winTextImageLoad]).then(
-      () => {
-        this.gameState = "new";
-        this.init();
-      }
-    );
 
     this.players = [];
     this.playerCount = 0;
@@ -128,14 +121,21 @@ class Game {
     this.canvas.width = 800;
     this.canvas.height = 500;
 
-    this.initEvents();
+    this.#initEvents();
+
+    Promise.all([horseSpriteLoad, raceCourseImageLoad, winTextImageLoad]).then(
+      () => {
+        this.gameState = "new";
+        this.#init();
+      }
+    );
   }
-  init() {
+  #init() {
     if (this.gameState === "loading") {
       return console.log("GAME LOADING");
     }
 
-    this.clear();
+    this.#clear();
     const entries = document
       .getElementById("entries")
       .value.split(/\r?\n/)
@@ -155,65 +155,65 @@ class Game {
         this.players[this.players.length - 1].draw();
       }
     } else {
-      this.clear();
+      this.#clear();
     }
-    this.initDraw();
+    this.#initDraw();
   }
-  initDraw() {
+  #initDraw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.drawCourse();
+    this.#drawCourse();
     this.players.forEach((player) => {
       player.draw();
     });
   }
-  clear() {
+  #clear() {
     this.players = [];
     this.playerCount = 0;
     this.gameTimeLastFrame = 0;
     this.winners = [];
   }
-  start() {
+  #start() {
     this.gameState = "playing";
-    this.play();
+    this.#play();
   }
-  play(gameTime) {
-    if (this.checkWinner()) {
+  #play(gameTime) {
+    if (this.#checkWinner()) {
       return;
     }
     const elapsedTime = parseInt(gameTime - this.gameTimeLastFrame);
     this.gameTimeLastFrame = gameTime;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.drawCourse();
-    const velocityArray = this.randomVelocity(this.playerCount);
+    this.#drawCourse();
+    const velocityArray = this.#randomVelocity(this.playerCount);
     for (let i = 0; i < this.playerCount; i++) {
       this.players[i].update(elapsedTime, velocityArray[i]);
       this.players[i].draw();
     }
-    this.gameId = requestAnimationFrame((t) => this.play(t));
+    this.gameId = requestAnimationFrame((t) => this.#play(t));
   }
-  stop() {
+  #stop() {
     cancelAnimationFrame(this.gameId);
   }
-  drawCourse() {
+  #drawCourse() {
     for (let i = 0; i < this.playerCount; i++) {
       this.ctx.drawImage(this.raceCourseImage, 0, 60 * i);
     }
   }
-  checkWinner() {
+  #checkWinner() {
     this.players.forEach((player) => {
       if (player.x + player.spriteWidth > this.goalX) {
         this.winners.push(player.playerName);
       }
     });
     if (this.winners.length > 0) {
-      this.stop();
+      this.#stop();
       this.gameState = "end";
-      this.drawResult();
+      this.#drawResult();
       return true;
     }
     return false;
   }
-  drawResult() {
+  #drawResult() {
     this.ctx.fillStyle = "rgba(0,0,0,0.2)";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     const startDrawPosY = 50;
@@ -243,12 +243,12 @@ class Game {
     this.ctx.fillText(...playerNameTextSet);
     this.ctx.textAlign = "start";
   }
-  shuffleHorseModelIndexArray() {
+  #shuffleHorseModelIndexArray() {
     this.horseModelIndexArray = shuffle(
       Array.from(Array(this.horseModelCount).keys())
     );
   }
-  randomVelocity(playerNum) {
+  #randomVelocity(playerNum) {
     const arr = [];
     const min = 0;
     const max = 400;
@@ -257,36 +257,36 @@ class Game {
     }
     return arr;
   }
-  disableAllInput() {
+  #disableAllInput() {
     document.getElementById("start_game").disabled = true;
     document.getElementById("horse_model_shuffle").disabled = true;
     document.getElementById("entries").disabled = true;
     document.getElementById("shuffle_entries").disabled = true;
   }
-  enableAllInput() {
+  #enableAllInput() {
     document.getElementById("start_game").disabled = false;
     document.getElementById("horse_model_shuffle").disabled = false;
     document.getElementById("entries").disabled = false;
     document.getElementById("shuffle_entries").disabled = false;
   }
-  initEvents() {
+  #initEvents() {
     // Event
     document.getElementById("start_game").addEventListener("click", (e) => {
       e.preventDefault();
-      this.disableAllInput();
-      this.start();
+      this.#disableAllInput();
+      this.#start();
     });
 
     document.getElementById("entries").addEventListener("input", () => {
-      this.init();
+      this.#init();
     });
 
     document
       .getElementById("horse_model_shuffle")
       .addEventListener("click", (e) => {
         e.preventDefault();
-        this.shuffleHorseModelIndexArray();
-        this.init();
+        this.#shuffleHorseModelIndexArray();
+        this.#init();
       });
 
     document
