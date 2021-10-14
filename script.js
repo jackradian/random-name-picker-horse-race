@@ -275,7 +275,7 @@ class Game {
   #randomVelocity(playerNum) {
     const arr = [];
     const min = 0;
-    const max = 400;
+    const max = 500;
     while (arr.length < playerNum) {
       arr.push(Math.floor(Math.random() * (max + 1 - min)) + min);
     }
