@@ -79,6 +79,9 @@ class Player {
 
 // Game
 class Game {
+  #gameStates;
+  #currentState;
+
   constructor() {
     // Horse sprite
     this.horseSprite = new Image();
@@ -106,7 +109,15 @@ class Game {
     // Random horse sprite index
     this.#shuffleHorseModelIndexArray();
 
-    this.gameState = "loading";
+    // Game states
+    this.#gameStates = {
+      loading: "loading",
+      new: "new",
+      playing: "playing",
+      end: "end",
+    };
+
+    this.#currentState = this.#gameStates.loading;
 
     this.players = [];
     this.playerCount = 0;
@@ -125,13 +136,13 @@ class Game {
 
     Promise.all([horseSpriteLoad, raceCourseImageLoad, winTextImageLoad]).then(
       () => {
-        this.gameState = "new";
+        this.#currentState = this.#gameStates.new;
         this.#init();
       }
     );
   }
   #init() {
-    if (this.gameState === "loading") {
+    if (this.#currentState === this.#gameStates.loading) {
       return console.log("GAME LOADING");
     }
 
@@ -173,7 +184,7 @@ class Game {
     this.winners = [];
   }
   #start() {
-    this.gameState = "playing";
+    this.#currentState = this.#gameStates.playing;
     this.#play();
   }
   #play(gameTime) {
@@ -207,7 +218,7 @@ class Game {
     });
     if (this.winners.length > 0) {
       this.#stop();
-      this.gameState = "end";
+      this.#currentState = this.#gameStates.end;
       this.#drawResult();
       return true;
     }
