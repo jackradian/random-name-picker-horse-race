@@ -20,26 +20,31 @@
       </h1>
     </header>
     <aside>
-      <div class="wrapper-center">
-        <button type="button" class="btn" id="start_game">Game Start</button>
-      </div>
-      <div>
-        <label>Entries</label>
-        <textarea id="entries" rows="12">
+      <div id="control_panel">
+        <div class="wrapper-center">
+          <button type="button" class="btn" id="start_game">Game Start</button>
+          <button type="button" class="btn hidden" id="new_game">
+            New Game
+          </button>
+        </div>
+        <div>
+          <label>Entries</label>
+          <textarea id="entries" rows="12">
 Noah
 Amelia
 Leo
 Olivia
 Archie
 Ivy</textarea
-        >
+          >
+        </div>
+        <button type="button" class="btn" id="shuffle_entries">
+          Shuffle Entries
+        </button>
+        <button type="button" class="btn" id="horse_model_shuffle">
+          Random Horse Model
+        </button>
       </div>
-      <button type="button" class="btn" id="shuffle_entries">
-        Shuffle Entries
-      </button>
-      <button type="button" class="btn" id="horse_model_shuffle">
-        Random Horse Model
-      </button>
     </aside>
     <main>
       <canvas id="canvas1"></canvas>

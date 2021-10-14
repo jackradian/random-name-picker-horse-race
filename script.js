@@ -81,6 +81,9 @@ class Player {
 class Game {
   #gameStates;
   #currentState;
+  #controlPanel;
+  #newGameBtn;
+  #startGameBtn;
 
   constructor() {
     // Horse sprite
@@ -132,6 +135,10 @@ class Game {
     this.canvas.width = 800;
     this.canvas.height = 500;
 
+    this.#controlPanel = document.getElementById("control_panel");
+    this.#newGameBtn = document.getElementById("new_game");
+    this.#startGameBtn = document.getElementById("start_game");
+
     this.#initEvents();
 
     Promise.all([horseSpriteLoad, raceCourseImageLoad, winTextImageLoad]).then(
@@ -182,6 +189,12 @@ class Game {
     this.playerCount = 0;
     this.gameTimeLastFrame = 0;
     this.winners = [];
+  }
+  #newGame() {
+    this.#stop();
+    this.#currentState = this.#gameStates.new;
+    this.#setControlPanel(this.#gameStates.new);
+    this.#init();
   }
   #start() {
     this.#currentState = this.#gameStates.playing;
@@ -268,23 +281,38 @@ class Game {
     }
     return arr;
   }
-  #disableAllInput() {
-    document.getElementById("start_game").disabled = true;
-    document.getElementById("horse_model_shuffle").disabled = true;
-    document.getElementById("entries").disabled = true;
-    document.getElementById("shuffle_entries").disabled = true;
-  }
-  #enableAllInput() {
-    document.getElementById("start_game").disabled = false;
-    document.getElementById("horse_model_shuffle").disabled = false;
-    document.getElementById("entries").disabled = false;
-    document.getElementById("shuffle_entries").disabled = false;
+  #setControlPanel(state) {
+    switch (state) {
+      case this.#gameStates.new:
+        this.#controlPanel
+          .querySelectorAll("input, textarea, button")
+          .forEach((el) => (el.disabled = false));
+        this.#startGameBtn.classList.remove("hidden");
+        this.#newGameBtn.disabled = true;
+        this.#newGameBtn.classList.add("hidden");
+        break;
+      case this.#gameStates.playing:
+        this.#controlPanel
+          .querySelectorAll("input, textarea, button")
+          .forEach((el) => (el.disabled = true));
+        this.#startGameBtn.classList.add("hidden");
+        this.#newGameBtn.disabled = false;
+        this.#newGameBtn.classList.remove("hidden");
+        break;
+      default:
+        console.log("default");
+    }
   }
   #initEvents() {
     // Event
-    document.getElementById("start_game").addEventListener("click", (e) => {
+    this.#newGameBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      this.#disableAllInput();
+      this.#newGame();
+    });
+
+    this.#startGameBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.#setControlPanel(this.#gameStates.playing);
       this.#start();
     });
 
